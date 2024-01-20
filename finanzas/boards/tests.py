@@ -45,7 +45,6 @@ class BoardTopicsTests(TestCase):
     def test_board_topics_url_resolves_board_topics_view(self):
         print("\nTest board topics url resolves board topics view")
         view = resolve('/boards/1/')
-        print(view.func) 
         self.assertEquals(view.func, board_topics)
 
     def test_board_topics_view_contains_link_back_to_homepage(self):

@@ -1,7 +1,7 @@
 from django.test import TestCase
-from .forms import SignUpForm
+from ..forms import SignUpForm
 from django.urls import reverse, resolve
-from .views import signup
+from ..views import signup
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 

@@ -13,13 +13,11 @@ class HomeTests(TestCase):
         self.response = self.client.get(url)
 
     def test_home_view_status_code(self):
-        # print("\nTest home view status code")
-        self.assertEquals(self.response.status_code, 200)
+        self.assertEqual(self.response.status_code, 200)
     
     def test_home_url_resolves_home_view(self):
-        # print("\nTest home url resolves home view")
         view = resolve('/')
-        self.assertEquals(view.func, home)
+        self.assertEqual(view.func, home)
     
     class HomeTests(TestCase):
         def setUp(self):
@@ -28,7 +26,6 @@ class HomeTests(TestCase):
             self.response = self.client.get(url)
 
         def test_home_view_contains_link_to_topics_page(self):
-            # print("\nTest home view contains link to topics page")
             board_topics_url = reverse('board_topics', kwargs={'pk': self.board.pk})
             self.assertContains(self.response, 'href="{0}"'.format(board_topics_url))
 

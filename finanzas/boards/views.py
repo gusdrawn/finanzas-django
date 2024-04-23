@@ -8,6 +8,15 @@ from django.db.models import Count
 from django.utils import timezone
 from django.views.generic import UpdateView
 from django.utils.decorators import method_decorator
+from django.views.generic import ListView
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+
+
+@method_decorator(login_required, name='dispatch')
+class BoardListView(ListView):
+    model = Board
+    context_object_name = 'boards'
+    template_name = 'home.html'
 
 @login_required
 def home(request):
@@ -17,9 +26,22 @@ def home(request):
     for board in boards:
         boards_names.append(board.name)
     return render(request, 'home.html', {'boards': boards})
+
+
 def board_topics(request, pk):
     board = get_object_or_404(Board, pk=pk)
-    topics = board.topics.order_by('-last_updated').annotate(replies=Count('posts')-1)
+    queryset = board.topics.order_by('-last_updated').annotate(replies=Count('posts')-1)
+    page = request.GET.get('page', 1)
+    paginator = Paginator(queryset, 20)
+    try:
+        topics = paginator.page(page)
+    except PageNotAnInteger:
+        # fallback to the first page
+        topics = paginator.page(1)
+    except EmptyPage:
+        # probably the user tried to add a page number
+        # in the url, so we fallback to the last page
+        topics = paginator.page(paginator.num_pages) 
     return render(request, 'topics.html', {'board': board, 'topics': topics})
 
 @login_required
@@ -82,3 +104,4 @@ class PostUpdateView(UpdateView):
         post.updated_at = timezone.now()
         post.save()
         return redirect('topic_posts', pk=post.topic.board.pk, topic_pk=post.topic.pk)
+    
